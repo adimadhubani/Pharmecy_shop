@@ -1,9 +1,10 @@
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Star, ArrowLeft } from "lucide-react";
+import { Star, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 
 const medicines = [
   {
@@ -116,34 +117,46 @@ function CardContent({ children }) {
 
 function MedicineCart() {
   const { searchQuery } = useOutletContext(); // Access search query
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { cartItems, setCartItems } = useOutletContext();
   const filteredMedicines = medicines.filter((medicine) =>
     medicine.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const navigate = useNavigate();
 
+
+  // Check if the user is logged in when the component mounts
+  useEffect(() => {
+    const user = localStorage.getItem("user"); // Check if user data is in localStorage
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+  console.log(isLoggedIn);
+  console.log(setIsLoggedIn)
+
   // Modal State
   const [showDescription, setShowDescription] = useState(null);
 
   // Handle "Add to Cart" functionality
   const handleAddToCart = (medicine) => {
+    if (!isLoggedIn) {
+      alert("You must log in to add products to the cart.");
+      navigate("/login"); // Redirect to login page using navigate
+      return;
+    }
     alert(`${medicine.name} added to cart!`);
-
-    // setCartItems((prevItems) => {
-    //   const existingItem = prevItems.find((item) => item.id === medicine.id);
-    //   if (existingItem) {
-    //     // If item already exists, update quantity
-    //     return prevItems.map((item) =>
-    //       item.id === medicine.id
-    //         ? { ...item, quantity: item.quantity + 1 }
-    //         : item
-    //     );
-    //   }
-    //   // If item doesn't exist, add a new item
-    //   return [...prevItems, { ...medicine, quantity: 1 }];
-    // });
-    setCartItems([...cartItems, medicine]); 
-
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item.name === medicine.name);
+      if (existingItem) {
+        // Update quantity if already in cart
+        return prevItems.map((item) =>
+          item.name === medicine.name ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      // Add new item to the cart
+      return [...prevItems, { ...medicine, quantity: 1 }];
+    });
   };
 
   // Handle "Description" modal toggle
@@ -157,14 +170,25 @@ function MedicineCart() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex items-center mb-6">
-        <button
-          className="flex items-center text-blue-700 hover:text-blue-900"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" /> Go Back to Home
-        </button>
-      </div>
+     <div className="flex justify-between items-center mb-6">
+  <button
+    className="flex items-center text-blue-700 hover:text-blue-900"
+    onClick={() => navigate("/")}
+  >
+    <ArrowLeft className="w-5 h-5 mr-2" /> Go Back to Home
+  </button>
+
+  <button
+    className="flex items-center text-blue-700 hover:text-blue-900"
+    onClick={() => navigate("/cart")}
+  >
+    <ArrowRight className="w-5 h-5 mr-2" /> Go Back to Cart
+  </button>
+</div>
+
+
+
+
       <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">
         Medicine E-Cart
       </h1>

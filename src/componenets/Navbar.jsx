@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, User, LogIn, Menu } from "lucide-react";
+import { motion } from "framer-motion";
+import { useOutletContext } from "react-router-dom";
 
 export default function Navbar({ setSearchQuery }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,6 +10,10 @@ export default function Navbar({ setSearchQuery }) {
 
   // Check if the current route is "About"
   const isSearchBarEnabled = location.pathname === "/about";
+ 
+
+  // check if the current route is "Login"
+  const isCartAndAccountEnable=(location.pathname==="/login" || "/register") ;
 
   return (
     <header className="sticky top-0 z-50">
@@ -33,33 +39,36 @@ export default function Navbar({ setSearchQuery }) {
                 onChange={(e) => setSearchQuery(e.target.value)} // Set the search query
               />
             ) : (
-              <div className="text-gray-200 text-sm italic">
-                   
-
-
-
-                   
-              </div>
+              <div className="text-gray-200 text-sm italic"></div>
             )}
           </div>
 
           {/* Right: Icons */}
           <div className="hidden md:flex items-center space-x-6">
             {/* Cart */}
+
+            {!isCartAndAccountEnable?(
+            
+          
             <Link
-              to="/cart"
-              className="p-2 text-gray-100 hover:text-orange-300 focus:outline-none"
+            to="/cart"
+            className="p-2 text-gray-100 hover:text-orange-300 focus:outline-none"
             >
               <ShoppingCart className="w-6 h-6" />
-            </Link>
+            </Link>):(<div className="text-gray-200 text-sm italic"></div>)
+            }
 
             {/* User Account */}
-            <Link
-              to="/account"
-              className="p-2 text-gray-100 hover:text-orange-300 focus:outline-none"
-            >
-              <User className="w-6 h-6" />
-            </Link>
+            {!isCartAndAccountEnable?(
+               <Link
+               to="/account"
+               className="p-2 text-gray-100 hover:text-orange-300 focus:outline-none"
+             >
+               <User className="w-6 h-6" />
+             </Link>
+
+            ):(<div className="text-gray-200 text-sm italic"></div>)}
+           
 
             {/* Login */}
             <Link
@@ -80,44 +89,48 @@ export default function Navbar({ setSearchQuery }) {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-green-500 text-white px-6 py-4">
-          <div className="flex flex-col space-y-4">
-            {isSearchBarEnabled && (
-              <input
-                type="text"
-                placeholder="Search for medicines, categories..."
-                className="w-full px-4 py-2 text-black rounded-full border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                onChange={(e) => setSearchQuery(e.target.value)} // Set the search query
-              />
-            )}
-            <Link
-              to="/cart"
-              className="flex items-center text-gray-100 hover:text-orange-300"
-            >
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              Cart
-            </Link>
-            <Link
-              to="/account"
-              className="flex items-center text-gray-100 hover:text-orange-300"
-            >
-              <User className="w-5 h-5 mr-2" />
-              Account
-            </Link>
-            <Link
-              to="/login"
-              className="text-sm font-medium bg-orange-500 text-black hover:bg-orange-600 px-4 py-2 rounded-lg"
-            >
-              Login
-            </Link>
-          </div>
+      {/* Mobile Menu with Framer Motion */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : -20 }}
+        transition={{ duration: 0.3 }}
+        className={`md:hidden bg-green-500 text-white px-6 py-4 ${isMenuOpen ? "block" : "hidden"}`}
+      >
+        <div className="flex flex-col space-y-4">
+          {isSearchBarEnabled && (
+            <input
+              type="text"
+              placeholder="Search for medicines, categories..."
+              className="w-full px-4 py-2 text-black rounded-full border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              onChange={(e) => setSearchQuery(e.target.value)} // Set the search query
+            />
+          )}
+          <Link
+            to="/cart"
+            className="flex items-center text-gray-100 hover:text-orange-300"
+          >
+            <ShoppingCart className="w-5 h-5 mr-2" />
+            Cart
+          </Link>
+          <Link
+            to="/account"
+            className="flex items-center text-gray-100 hover:text-orange-300"
+          >
+            <User className="w-5 h-5 mr-2" />
+            Account
+          </Link>
+          <Link
+            to="/login"
+            className="text-sm font-medium bg-orange-500 text-black hover:bg-orange-600 px-4 py-2 rounded-lg"
+          >
+            Login
+          </Link>
         </div>
-      )}
+      </motion.div>
     </header>
   );
 }
+
 
 
 

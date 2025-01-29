@@ -8,11 +8,14 @@ import { useState } from 'react'
 function Layout() {
   const [searchQuery, setSearchQuery] = useState(""); // State for the search query
   const [cartItems, setCartItems] = useState([]);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+ 
   return (
     <div>
-            <Navbar setSearchQuery={setSearchQuery} />
       
-      <Outlet context={{ searchQuery ,cartItems,setCartItems}} />
+            { !isDescriptionOpen && <Navbar setSearchQuery={setSearchQuery} />}
+      
+      <Outlet context={{ searchQuery ,cartItems,setCartItems,isDescriptionOpen,setIsDescriptionOpen}} />
 
       <Footer/>
      

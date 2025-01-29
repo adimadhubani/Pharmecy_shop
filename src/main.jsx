@@ -10,8 +10,12 @@ import About from './componenets/About'
 import Cart from './componenets/Cart'
 import { useState } from 'react'
 import MyAccount from './componenets/MyAccount'
+import LoginPage from './componenets/Login'
+import CreateAccountPage from './componenets/CreateAccount'
+import PersonalCare from './componenets/PersonalCare'
+import HealthPrescriptions from './componenets/HealthSupplement'
 
-// const [cartItems, setCartItems] = useState([]);
+
 
 const router=createBrowserRouter(
   
@@ -19,7 +23,11 @@ const router=createBrowserRouter(
     <Route path='/' element={<Layout/>}>
        <Route path="" element={<Home/>}/>
       <Route path="about" element={<About  />}/>
+      <Route path="login" element={<LoginPage  />}/>
+      <Route path="register" element={<CreateAccountPage  />}/>
       <Route path="cart" element={<Cart />}/>
+      <Route path="personalcare" element={<PersonalCare />}/>
+      <Route path="healthsupplement" element={<HealthPrescriptions/>}/>
       <Route path="account" element={<MyAccount />}/>
       {/* <Route path="user/:userid" element={<User/>}/> */}
       {/* <Route loader={githubInfoLoader} path="github" element={<Github/>}/> */}

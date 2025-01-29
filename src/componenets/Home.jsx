@@ -25,8 +25,8 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-screen-xl mx-auto">
           {[
             { name: "Prescriptions", img: "https://png.pngtree.com/thumb_back/fh260/background/20210303/pngtree-prescription-drug-background-map-image_574815.jpg", link: "/category/prescriptions" },
-            { name: "Health Supplements", img: "https://plus.unsplash.com/premium_photo-1661757091716-a180d11b90ab?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", link: "/category/health-supplements" },
-            { name: "Personal Care", img: "https://plus.unsplash.com/premium_photo-1664475564082-a56ec9047981?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", link: "/category/personal-care" },
+            { name: "Health Supplements", img: "https://plus.unsplash.com/premium_photo-1661757091716-a180d11b90ab?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", link: "/healthsupplement" },
+            { name: "Personal Care", img: "https://plus.unsplash.com/premium_photo-1664475564082-a56ec9047981?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", link: "/personalcare" },
           ].map((category) => (
             <Link
               to={category.link}

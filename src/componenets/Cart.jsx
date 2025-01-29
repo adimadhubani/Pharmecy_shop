@@ -1,36 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { Trash, MinusCircle, PlusCircle, ArrowRightCircle } from "lucide-react";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate} from "react-router-dom";
 
 export default function Cart() {
-  // Get cartItems and setCartItems from the parent context
   const { cartItems, setCartItems } = useOutletContext();
-  
-  // State for price
   const [price, setPrice] = useState(0);
-
-  // Navigate hook to redirect to about page
+  
   const navigate = useNavigate();
+  
 
-  // Update quantity of an item
-  const updateQuantity = (id, delta) => {
+
+
+  // Update quantity of a specific item in the cart
+  const updateQuantity = (name, delta) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) } // Ensure quantity doesn't go below 1
+        item.name === name
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
           : item
       )
     );
   };
 
-  // Remove item from the cart
-  const removeItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  // Remove an item from the cart and update the total
+  const removeItem = (name) => {
+    const itemToRemove = cartItems.find((item) => item.name === name);
+    if (itemToRemove) {
+      setPrice((prevPrice) => prevPrice - calculateItemTotal(itemToRemove));
+    }
+    setCartItems((prevItems) => prevItems.filter((item) => item.name !== name));
+  };
+
+  // trash the item
+  const trashItem=(name)=>{
+    const item = cartItems.find((item) => item.name === name);
+
+    if(item.quantity===1){
+      removeItem(name)
+    }else{
+      updateQuantity(name,-1)
+    }
+  }
+
+  // Calculate the total price of an individual item (considering quantity and discount)
+  const calculateItemTotal = (item) => {
+    const discountedPrice = item.price - (item.price * item.discount) / 100;
+    return discountedPrice * item.quantity;
   };
 
   // Calculate the total price of all items in the cart
   const calculateTotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce((acc, item) => acc + calculateItemTotal(item), 0);
   };
 
   // Update the price state whenever cartItems change
@@ -38,7 +58,7 @@ export default function Cart() {
     setPrice(calculateTotal());
   }, [cartItems]);
 
-  // Navigate to the /about page when the arrow is clicked
+  // Navigate to the /about page
   const goToAbout = () => {
     navigate("/about");
   };
@@ -53,7 +73,7 @@ export default function Cart() {
         <div className="space-y-6">
           {cartItems.map((item) => (
             <div
-              key={item.id}
+              key={item.name}
               className="flex items-center bg-white shadow-md rounded-lg p-4"
             >
               <img
@@ -65,17 +85,35 @@ export default function Cart() {
                 <h2 className="text-lg font-semibold text-gray-700">
                   {item.name}
                 </h2>
-                <p className="text-sm text-gray-500">₹{item.price.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">
+                  {item.description}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Usage: {item.usage}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Rating: ⭐{item.rating}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Discount: {item.discount}%
+                </p>
+                <p className="text-sm text-gray-500">
+                  Price: ₹{item.price.toFixed(2)} 
+                  <span className="text-green-600">
+                    {" "}
+                    (₹{(item.price - (item.price * item.discount) / 100).toFixed(2)} after discount)
+                  </span>
+                </p>
                 <div className="flex items-center mt-2">
                   <button
-                    onClick={() => updateQuantity(item.id, -1)}
+                    onClick={() => updateQuantity(item.name, -1)}
                     className="text-gray-500 hover:text-gray-700"
                   >
                     <MinusCircle className="w-5 h-5" />
                   </button>
                   <span className="px-4 text-gray-700">{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.id, 1)}
+                    onClick={() => updateQuantity(item.name, 1)}
                     className="text-gray-500 hover:text-gray-700"
                   >
                     <PlusCircle className="w-5 h-5" />
@@ -83,7 +121,7 @@ export default function Cart() {
                 </div>
               </div>
               <button
-                onClick={() => removeItem(item.id)}
+                onClick={() => trashItem(item.name)}
                 className="text-red-500 hover:text-red-700"
               >
                 <Trash className="w-6 h-6" />
@@ -96,27 +134,28 @@ export default function Cart() {
             <p className="text-xl font-bold text-gray-800">₹{price.toFixed(2)}</p>
           </div>
 
-          <button
-            className="w-full bg-green-500 text-white py-3 rounded-lg shadow-md font-semibold hover:bg-green-600"
-          >
+          <button className="w-full bg-green-500 text-white py-3 rounded-lg shadow-md font-semibold hover:bg-green-600">
             Proceed to Checkout
           </button>
-
-          {/* Arrow icon to go to the About page */}
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={goToAbout}
-              className="flex items-center text-blue-500 hover:text-blue-700"
-            >
-              <ArrowRightCircle className="w-6 h-6 mr-2" />
-              Go to About
-            </button>
-          </div>
         </div>
       )}
+
+      {/* Arrow icon to go to the About page - always visible */}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={goToAbout}
+          className="flex items-center text-blue-500 hover:text-blue-700"
+        >
+          <ArrowRightCircle className="w-6 h-6 mr-2" />
+          Go to Shopping
+        </button>
+      </div>
     </div>
   );
 }
+
+
+
 
 
 
